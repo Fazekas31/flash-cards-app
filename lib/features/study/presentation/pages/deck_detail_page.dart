@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../bloc/flashcard_bloc.dart';
 import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
+import '../../../../core/widgets/linkable_text_widget.dart';
 
 class DeckDetailPage extends StatefulWidget {
   final int deckId;
@@ -143,16 +144,16 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                                 Icons.label_outline,
                                 color: Color(0xFF0B194C),
                               ),
-                              title: Text(
-                                card.question,
+                              title: LinkableTextWidget(
+                                text: card.question,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    card.answer,
+                                  LinkableTextWidget(
+                                    text: card.answer,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),

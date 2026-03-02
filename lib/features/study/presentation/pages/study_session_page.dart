@@ -7,6 +7,7 @@ import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
 import '../../domain/models/flashcard.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/linkable_text_widget.dart';
 
 class StudySessionPage extends StatefulWidget {
   final int deckId;
@@ -123,9 +124,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
                           child: Center(
                             child: Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: Text(
-                                currentCard.question,
-                                style: Theme.of(context)
+                              child: LinkableTextWidget(
+                                text: currentCard.question,
+                                textStyle: Theme.of(context)
                                     .textTheme
                                     .headlineMedium
                                     ?.copyWith(color: const Color(0xFF0B194C)),
@@ -147,9 +148,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                 child: Center(
                                   child: Padding(
                                     padding: const EdgeInsets.all(24.0),
-                                    child: Text(
-                                      currentCard.answer,
-                                      style: Theme.of(context)
+                                    child: LinkableTextWidget(
+                                      text: currentCard.answer,
+                                      textStyle: Theme.of(context)
                                           .textTheme
                                           .headlineMedium
                                           ?.copyWith(
