@@ -79,7 +79,10 @@ class _DecksPageState extends State<DecksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.decksTitle),
+        title: Text(
+          AppLocalizations.of(context)!.decksTitle,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
         actions: [
           PopupMenuButton<Locale>(
             icon: const Icon(Icons.language),
@@ -137,7 +140,6 @@ class _DecksPageState extends State<DecksPage> {
               itemBuilder: (context, index) {
                 final deck = state.decks[index];
                 return Card(
-                  elevation: 4,
                   child: InkWell(
                     onTap: () {
                       context.push('/study/${deck.id}');
@@ -152,7 +154,11 @@ class _DecksPageState extends State<DecksPage> {
                         children: [
                           Text(
                             deck.name,
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  color: const Color(0xFF0B194C),
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
                           const SizedBox(height: 8),
                           if (deck.description != null)
@@ -174,7 +180,9 @@ class _DecksPageState extends State<DecksPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateDeckDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF76E0A3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        child: const Icon(Icons.add, color: Color(0xFF0B194C)),
       ),
     );
   }

@@ -97,10 +97,16 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                 icon: const Icon(Icons.play_arrow),
                 label: Text(
                   AppLocalizations.of(context)!.flashcardsStart,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
               ),
             ),
@@ -124,38 +130,55 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                     itemCount: state.flashcards.length,
                     itemBuilder: (context, index) {
                       final card = state.flashcards[index];
-                      return ListTile(
-                        leading: const Icon(Icons.label_outline),
-                        title: Text(
-                          card.question,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 4.0,
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              card.answer,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${AppLocalizations.of(context)!.flashcardsNextReview} ${card.dueDate.day.toString().padLeft(2, '0')}/${card.dueDate.month.toString().padLeft(2, '0')}/${card.dueDate.year}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.blueGrey,
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: ListTile(
+                              leading: const Icon(
+                                Icons.label_outline,
+                                color: Color(0xFF0B194C),
+                              ),
+                              title: Text(
+                                card.question,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    card.answer,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${AppLocalizations.of(context)!.flashcardsNextReview} ${card.dueDate.day.toString().padLeft(2, '0')}/${card.dueDate.month.toString().padLeft(2, '0')}/${card.dueDate.year}',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF0B194C),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Color(0xFF76E0A3),
+                                ),
+                                onPressed: () {
+                                  context.read<FlashcardBloc>().add(
+                                    DeleteFlashcard(card.id),
+                                  );
+                                },
                               ),
                             ),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            context.read<FlashcardBloc>().add(
-                              DeleteFlashcard(card.id),
-                            );
-                          },
+                          ),
                         ),
                       );
                     },
@@ -169,7 +192,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddCardDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF76E0A3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        child: const Icon(Icons.add, color: Color(0xFF0B194C)),
       ),
     );
   }

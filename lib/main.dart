@@ -97,8 +97,58 @@ class MyApp extends StatelessWidget {
           ],
           supportedLocales: const [Locale('en', ''), Locale('pt', '')],
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF76E0A3), // Primary Green
+              primary: const Color(0xFF76E0A3),
+              onPrimary: const Color(0xFF0B194C), // Deep Blue Dark Text
+              surface: Colors.white,
+              onSurface: const Color(0xFF0B194C),
+              background: const Color(0xFFF9FAFB),
+            ),
             useMaterial3: true,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: Color(0xFF0B194C),
+              elevation: 0,
+              centerTitle: true,
+              iconTheme: IconThemeData(color: Color(0xFF0B194C)),
+              actionsIconTheme: IconThemeData(color: Color(0xFF0B194C)),
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0xFF76E0A3),
+              foregroundColor: Color(0xFF0B194C),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF76E0A3),
+                foregroundColor: const Color(0xFF0B194C),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+            cardTheme: CardThemeData(
+              color: Colors.white,
+              elevation: 12,
+              shadowColor: Colors.black.withOpacity(0.25),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: Colors.grey.shade200, width: 1),
+              ),
+            ),
+            textTheme: const TextTheme(
+              titleLarge: TextStyle(
+                color: Color(0xFF0B194C),
+                fontWeight: FontWeight.bold,
+              ),
+              bodyLarge: TextStyle(color: Color(0xFF0B194C)),
+              bodyMedium: TextStyle(color: Color(0xFF0B194C)),
+            ),
           ),
           routerConfig: appRouter,
         );
