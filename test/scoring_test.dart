@@ -75,7 +75,7 @@ void main() {
 
       final saved = fakeRepo.lastSaved!;
       expect(saved.repetitions, 1);
-      expect(saved.intervalDays, 1);
+      expect(saved.intervalDays, 4);
       expect(saved.easeFactor, greaterThan(2.5));
 
       bloc.add(ReviewFlashcard(saved, 3));

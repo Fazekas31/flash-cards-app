@@ -35,6 +35,14 @@ class OnboardingPage extends StatelessWidget {
           ),
         ),
         PageViewModel(
+          title: "Automação Inteligente",
+          body:
+              "Você não escolhe as datas! O algoritmo repete os cartões automaticamente baseado no seu feedback (Fácil, Bom, Difícil).",
+          image: const Center(
+            child: Icon(Icons.psychology, size: 100, color: Colors.blue),
+          ),
+        ),
+        PageViewModel(
           title: "Vamos Começar!",
           body: "Crie seus decks, adicione cartões e domine seus estudos.",
           image: const Center(

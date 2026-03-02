@@ -77,13 +77,27 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
       card.repetitions = 0;
       card.intervalDays = 1;
     } else {
-      card.repetitions += 1;
-      if (card.repetitions == 1) {
-        card.intervalDays = 1;
-      } else if (card.repetitions == 2) {
-        card.intervalDays = 6;
+      if (card.repetitions == 0) {
+        if (q == 1) {
+          card.intervalDays = 1;
+        } else if (q == 2) {
+          card.intervalDays = 2;
+        } else if (q == 3) {
+          card.intervalDays = 4;
+        }
+        card.repetitions = 1;
+      } else if (card.repetitions == 1) {
+        if (q == 1) {
+          card.intervalDays = 2;
+        } else if (q == 2) {
+          card.intervalDays = 4;
+        } else if (q == 3) {
+          card.intervalDays = 6;
+        }
+        card.repetitions = 2;
       } else {
         card.intervalDays = (card.intervalDays * card.easeFactor).round();
+        card.repetitions += 1;
       }
     }
 
