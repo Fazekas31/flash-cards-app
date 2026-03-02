@@ -8,6 +8,8 @@ import '../bloc/flashcard_state.dart';
 import '../../domain/models/flashcard.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/linkable_text_widget.dart';
+import '../../../../core/services/gemini_ai_service.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class StudySessionPage extends StatefulWidget {
   final int deckId;
@@ -31,6 +33,100 @@ class _StudySessionPageState extends State<StudySessionPage> {
     if (cardKey.currentState != null && !cardKey.currentState!.isFront) {
       cardKey.currentState!.toggleCardWithoutAnimation();
     }
+  }
+
+  void _showGeminiExplanation(BuildContext context, Flashcard card) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Professor IA 🤖',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0B194C),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Expanded(
+                    child: FutureBuilder<String>(
+                      future: GeminiAiService().explainFlashcardTheme(
+                        card.question,
+                        card.answer,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  color: Color(0xFF76E0A3),
+                                ),
+                                SizedBox(height: 16),
+                                Text('Analisando o cartão...'),
+                              ],
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Erro: \${snapshot.error}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } else {
+                          return Markdown(
+                            controller: scrollController,
+                            data: snapshot.data ?? '',
+                            styleSheet: MarkdownStyleSheet(
+                              p: const TextStyle(
+                                fontSize: 16,
+                                height: 1.5,
+                                color: Color(0xFF0B194C),
+                              ),
+                              strong: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0B194C),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -157,6 +253,41 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                             color: const Color(0xFF0B194C),
                                           ),
                                       textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 8,
+                                ),
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _showGeminiExplanation(
+                                    context,
+                                    currentCard,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.auto_awesome,
+                                    color: Color(0xFF0B194C),
+                                  ),
+                                  label: const Text(
+                                    'Explique-me Melhor (IA)',
+                                    style: TextStyle(
+                                      color: Color(0xFF0B194C),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                      color: Color(0xFF76E0A3),
+                                      width: 2,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
                                     ),
                                   ),
                                 ),
