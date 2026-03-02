@@ -1,4 +1,6 @@
+import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/localization/locale_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../bloc/deck_bloc.dart';
@@ -30,24 +32,28 @@ class _DecksPageState extends State<DecksPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Novo Deck'),
+          title: Text(AppLocalizations.of(context)!.deckNew),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nome do Deck'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.deckName,
+                ),
               ),
               TextField(
                 controller: descController,
-                decoration: const InputDecoration(labelText: 'Descrição'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.deckDescription,
+                ),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.deckCancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -61,7 +67,7 @@ class _DecksPageState extends State<DecksPage> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Criar'),
+              child: Text(AppLocalizations.of(context)!.deckCreate),
             ),
           ],
         );
@@ -73,8 +79,24 @@ class _DecksPageState extends State<DecksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meus Decks'),
+        title: Text(AppLocalizations.of(context)!.decksTitle),
         actions: [
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language),
+            onSelected: (Locale locale) {
+              context.read<LocaleCubit>().setLocale(locale);
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+              const PopupMenuItem<Locale>(
+                value: Locale('en', ''),
+                child: Text('English'),
+              ),
+              const PopupMenuItem<Locale>(
+                value: Locale('pt', ''),
+                child: Text('Português'),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () {
@@ -99,7 +121,9 @@ class _DecksPageState extends State<DecksPage> {
           if (state is DeckError) return Center(child: Text(state.message));
           if (state is DeckLoaded) {
             if (state.decks.isEmpty) {
-              return const Center(child: Text('Nenhum deck ainda. Crie um!'));
+              return Center(
+                child: Text(AppLocalizations.of(context)!.decksEmpty),
+              );
             }
             return GridView.builder(
               padding: const EdgeInsets.all(16),

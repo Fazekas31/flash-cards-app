@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import 'package:flash_cards/l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -28,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.registerTitle)),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
@@ -50,18 +51,26 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 TextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.registerEmail,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.registerPassword,
+                  ),
                   obscureText: true,
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _register,
-                  child: const Text('Register'),
+                  child: Text(AppLocalizations.of(context)!.registerButton),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!.registerHasAccount),
                 ),
               ],
             ),

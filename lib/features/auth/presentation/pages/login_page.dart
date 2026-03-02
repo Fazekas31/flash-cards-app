@@ -1,3 +1,4 @@
+import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.loginTitle)),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
@@ -50,19 +51,26 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.loginEmail,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.loginPassword,
+                  ),
                   obscureText: true,
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(onPressed: _login, child: const Text('Login')),
+                ElevatedButton(
+                  onPressed: _login,
+                  child: Text(AppLocalizations.of(context)!.loginButton),
+                ),
                 TextButton(
                   onPressed: () => context.push('/register'),
-                  child: const Text('Create an account'),
+                  child: Text(AppLocalizations.of(context)!.loginNoAccount),
                 ),
               ],
             ),

@@ -1,3 +1,4 @@
+import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flip_card/flip_card.dart';
@@ -5,6 +6,7 @@ import '../bloc/flashcard_bloc.dart';
 import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
 import '../../domain/models/flashcard.dart';
+import 'package:go_router/go_router.dart';
 
 class StudySessionPage extends StatefulWidget {
   final int deckId;
@@ -33,7 +35,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Study Session')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.studySessionTitle),
+      ),
       body: BlocBuilder<FlashcardBloc, FlashcardState>(
         builder: (context, state) {
           if (state is FlashcardLoading)
@@ -44,14 +48,17 @@ class _StudySessionPageState extends State<StudySessionPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'No more cards to study today! 🎉',
-                      style: TextStyle(fontSize: 24),
+                    Text(
+                      AppLocalizations.of(context)!.studySessionEmpty,
+                      style: const TextStyle(fontSize: 24),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Back to Deck'),
+                      onPressed: () => context.go('/'),
+                      child: Text(
+                        AppLocalizations.of(context)!.studySessionBack,
+                      ),
                     ),
                   ],
                 ),
@@ -65,7 +72,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Cards remaining: ${state.studyCards.length}',
+                    '${AppLocalizations.of(context)!.studySessionRemaining} ${state.studyCards.length}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -122,22 +129,30 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   _reviewButton(
-                                    'Novamente',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.studyQualityAgain,
                                     Colors.red,
                                     () => _reviewCard(currentCard, 0),
                                   ),
                                   _reviewButton(
-                                    'Difícil',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.studyQualityHard,
                                     Colors.orange,
                                     () => _reviewCard(currentCard, 1),
                                   ),
                                   _reviewButton(
-                                    'Bom',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.studyQualityGood,
                                     Colors.green,
                                     () => _reviewCard(currentCard, 2),
                                   ),
                                   _reviewButton(
-                                    'Fácil',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.studyQualityEasy,
                                     Colors.blue,
                                     () => _reviewCard(currentCard, 3),
                                   ),

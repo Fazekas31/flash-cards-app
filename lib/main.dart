@@ -1,8 +1,10 @@
+import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_constants.dart';
 import 'core/services/local_db_service.dart';
 import 'core/routes/app_router.dart';
@@ -17,6 +19,7 @@ import 'features/study/domain/repositories/flashcard_repository.dart';
 import 'features/decks/presentation/bloc/deck_bloc.dart';
 import 'features/study/presentation/bloc/flashcard_bloc.dart';
 import 'core/services/sync_service.dart';
+import 'core/localization/locale_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +58,7 @@ void main() async {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<LocaleCubit>(create: (context) => LocaleCubit()),
           BlocProvider<AuthBloc>(
             create: (context) =>
                 AuthBloc(authRepository)..add(AuthCheckRequested()),
@@ -80,13 +84,25 @@ class MyApp extends StatelessWidget {
     final authBloc = context.read<AuthBloc>();
     final appRouter = createRouter(isFirstLaunch, authBloc);
 
-    return MaterialApp.router(
-      title: 'Flashcards',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      routerConfig: appRouter,
+    return BlocBuilder<LocaleCubit, Locale?>(
+      builder: (context, locale) {
+        return MaterialApp.router(
+          locale: locale,
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('en', ''), Locale('pt', '')],
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            useMaterial3: true,
+          ),
+          routerConfig: appRouter,
+        );
+      },
     );
   }
 }

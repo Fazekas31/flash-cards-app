@@ -1,3 +1,4 @@
+import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -28,19 +29,23 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('New Flashcard'),
+          title: Text(AppLocalizations.of(context)!.flashcardNew),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: qController,
-                decoration: const InputDecoration(labelText: 'Question'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.flashcardQuestion,
+                ),
                 minLines: 2,
                 maxLines: 4,
               ),
               TextField(
                 controller: aController,
-                decoration: const InputDecoration(labelText: 'Answer'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.flashcardAnswer,
+                ),
                 minLines: 2,
                 maxLines: 4,
               ),
@@ -49,7 +54,7 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.deckCancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -65,7 +70,7 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Add'),
+              child: Text(AppLocalizations.of(context)!.flashcardAdd),
             ),
           ],
         );
@@ -76,7 +81,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Deck Flashcards')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.flashcardsTitle),
+      ),
       body: Column(
         children: [
           Padding(
@@ -88,9 +95,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                   context.push('/study/${widget.deckId}/session');
                 },
                 icon: const Icon(Icons.play_arrow),
-                label: const Text(
-                  'Start Study Session',
-                  style: TextStyle(fontSize: 18),
+                label: Text(
+                  AppLocalizations.of(context)!.flashcardsStart,
+                  style: const TextStyle(fontSize: 18),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -108,7 +115,11 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                   return Center(child: Text(state.message));
                 if (state is FlashcardLoaded) {
                   if (state.flashcards.isEmpty)
-                    return const Center(child: Text('No cards yet.'));
+                    return Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.flashcardsEmpty,
+                      ),
+                    );
                   return ListView.builder(
                     itemCount: state.flashcards.length,
                     itemBuilder: (context, index) {
@@ -130,7 +141,7 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Próxima revisão: ${card.dueDate.day.toString().padLeft(2, '0')}/${card.dueDate.month.toString().padLeft(2, '0')}/${card.dueDate.year}',
+                              '${AppLocalizations.of(context)!.flashcardsNextReview} ${card.dueDate.day.toString().padLeft(2, '0')}/${card.dueDate.month.toString().padLeft(2, '0')}/${card.dueDate.year}',
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.blueGrey,
