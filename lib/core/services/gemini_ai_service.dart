@@ -34,6 +34,7 @@ class GeminiAiService {
     * Use texto **Markdown** (negritos, itálicos, bullet points). 
     * Não use tags HTML.
     * Pule introduções extensas e seja direto.
+    * **OBRIGATÓRIO:** Pule uma linha no final da explicação e forneça pelo menos 1 (um) link de fonte confiável da internet onde o usuário pode ler mais sobre a sua explicação. Formate o link exatamente assim: `[Nome do Artigo/Site](https://www....)`
     ''';
 
     try {

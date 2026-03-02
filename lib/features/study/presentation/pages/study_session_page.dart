@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/linkable_text_widget.dart';
 import '../../../../core/services/gemini_ai_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudySessionPage extends StatefulWidget {
   final int deckId;
@@ -114,7 +115,22 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF0B194C),
                               ),
+                              a: const TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
+                            onTapLink: (text, href, title) async {
+                              if (href != null) {
+                                final uri = Uri.parse(href);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              }
+                            },
                           );
                         }
                       },
