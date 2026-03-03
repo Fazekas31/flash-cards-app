@@ -10,6 +10,10 @@ O aplicativo adota a arquitetura **Feature-First** para escalabilidade, utilizan
 - ☁️ **Sincronização em Nuvem:** Quando há conectividade, o app sincroniza as mudanças locais para o banco em nuvem PostgreSQL (`Supabase`), de forma invisível via `SyncService`.
 - 🔐 **Autenticação Segura:** Criação de conta e login seguro pela infraestrutura do `Supabase Auth`.
 - 🔁 **Spaced Repetition (SM-2):** Algoritmo inteligente que ajusta dinamicamente a próxima data de revisão do cartão dependendo do progresso do usuário (Novamente, Difícil, Bom, Fácil).
+- 🖼️ **Suporte a Imagens:** Anexe fotos da galeria ou câmera diretamente nos seus flashcards para uma experiência de estudo mais visual.
+- � **Suporte a Arquivos PDF:** Importe materiais de estudo em PDF diretamente no aplicativo.
+- �🔄 **Animações de Cartão (Flip):** Os flashcards possuem animações de virada (flip) fluidas para revelar as respostas com elegância.
+- 📁 **Organização por Categorias:** Agrupe seus flashcards em "Decks" (baralhos) temáticos para facilitar o foco em determinadas matérias.
 - 🤖 **Professor Particular de IA (Gemini):** Integração com o Google Gemini 2.5 Flash! Se você errar um cartão ou pedir uma explicação extra, a IA entra em ação fornecendo contexto didático, Markdown e até enviando fontes da internet em hyperlinks azuis.
 - 🔔 **Notificações Locais Inteligentes:** Um serviço em background configurado no relógio do celular emite um alerta diário programado lembrando o aluno de bater sua meta do dia de cartões acumulados.
 - 🌍 **Internacionalização (i18n):** Suporte nativo completo a Inglês (EN) e Português do Brasil (PT-BR) rodando em tempo real.
