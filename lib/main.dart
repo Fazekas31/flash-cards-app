@@ -20,6 +20,7 @@ import 'features/decks/presentation/bloc/deck_bloc.dart';
 import 'features/study/presentation/bloc/flashcard_bloc.dart';
 import 'core/services/sync_service.dart';
 import 'core/localization/locale_cubit.dart';
+import 'core/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,15 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+
+  try {
+    final notificationService = NotificationService();
+    await notificationService.init();
+    await notificationService.requestPermissions();
+    await notificationService.scheduleDailyReminder(); // <--- Opção 1 ligada!
+  } catch (e) {
+    debugPrint("Failed to initialize notifications: $e");
+  }
 
   final authRepository = AuthRepositoryImpl(Supabase.instance.client);
   final deckRepository = DeckRepositoryImpl(localDbService);
