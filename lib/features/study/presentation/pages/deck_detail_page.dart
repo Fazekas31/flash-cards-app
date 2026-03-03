@@ -7,6 +7,10 @@ import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
 import '../../../../core/widgets/linkable_text_widget.dart';
 import '../../../../core/services/gemini_ai_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
 class DeckDetailPage extends StatefulWidget {
   final int deckId;
@@ -83,6 +87,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
   void _showGenerateCardsBottomSheet() {
     final textController = TextEditingController();
     bool isLoading = false;
+    String? attachedFileName;
+    Uint8List? attachedFileBytes;
+    String? attachedMimeType;
 
     showModalBottomSheet(
       context: context,
@@ -123,26 +130,115 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                     maxLines: 6,
                     decoration: InputDecoration(
                       hintText:
-                          'Ex: "A fotossíntese é o processo biológico onde a planta..."\\nCole o trecho completo aqui.',
+                          'Ex: "A fotossíntese é o processo biológico onde a planta..."\\nCole texto ou anexe um arquivo.',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                final picker = ImagePicker();
+                                final image = await picker.pickImage(
+                                  source: ImageSource.camera,
+                                );
+                                if (image != null) {
+                                  final bytes = await image.readAsBytes();
+                                  setState(() {
+                                    attachedFileName = image.name;
+                                    attachedFileBytes = bytes;
+                                    attachedMimeType = 'image/jpeg';
+                                  });
+                                }
+                              },
+                        icon: const Icon(Icons.camera_alt),
+                        label: const Text('Câmera'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF0F0F0),
+                          foregroundColor: const Color(0xFF0B194C),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                final result = await FilePicker.platform
+                                    .pickFiles(
+                                      type: FileType.custom,
+                                      allowedExtensions: [
+                                        'pdf',
+                                        'png',
+                                        'jpg',
+                                        'jpeg',
+                                      ],
+                                      withData: true,
+                                    );
+                                if (result != null) {
+                                  final file = result.files.first;
+                                  final bytes =
+                                      file.bytes ??
+                                      await File(file.path!).readAsBytes();
+                                  String mime = 'application/pdf';
+                                  if (file.extension?.toLowerCase() == 'png')
+                                    mime = 'image/png';
+                                  if (file.extension?.toLowerCase() == 'jpg' ||
+                                      file.extension?.toLowerCase() == 'jpeg')
+                                    mime = 'image/jpeg';
+
+                                  setState(() {
+                                    attachedFileName = file.name;
+                                    attachedFileBytes = bytes;
+                                    attachedMimeType = mime;
+                                  });
+                                }
+                              },
+                        icon: const Icon(Icons.attach_file),
+                        label: const Text('PDF / Imagem'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF0F0F0),
+                          foregroundColor: const Color(0xFF0B194C),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (attachedFileName != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: Text(
+                        '📎 Anexo pronto: $attachedFileName',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4DB97F),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
                   if (isLoading)
                     const Center(child: CircularProgressIndicator())
                   else
                     ElevatedButton.icon(
                       onPressed: () async {
-                        if (textController.text.trim().isEmpty) return;
+                        if (textController.text.trim().isEmpty &&
+                            attachedFileBytes == null)
+                          return;
                         setState(() {
                           isLoading = true;
                         });
 
                         try {
                           final cards = await GeminiAiService()
-                              .generateFlashcards(textController.text.trim());
+                              .generateFlashcards(
+                                contextText: textController.text.trim(),
+                                fileBytes: attachedFileBytes,
+                                mimeType: attachedMimeType,
+                              );
 
                           if (mounted) {
                             context.read<FlashcardBloc>().add(

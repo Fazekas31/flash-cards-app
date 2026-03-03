@@ -1,6 +1,7 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'dart:typed_data';
 
 class GeminiAiService {
   late GenerativeModel _model;
@@ -62,16 +63,17 @@ class GeminiAiService {
     }
   }
 
-  Future<List<Map<String, String>>> generateFlashcards(
-    String contextText,
-  ) async {
+  Future<List<Map<String, String>>> generateFlashcards({
+    String? contextText,
+    Uint8List? fileBytes,
+    String? mimeType,
+  }) async {
     final prompt =
         '''
-    Aja como um criador e especialista de flashcards de repetição espaçada. O usuário fornecerá um texto longo, como anotações gerais ou um PDF colado.
-    Sua tarefa é extrair as informações e conceitos mais importantes desse texto e transformá-los em até 15 cartões de pergunta e resposta diretas para memorização.
+    Aja como um criador e especialista de flashcards de repetição espaçada. O usuário fornecerá um texto, arquivo ou imagem com anotações.
+    Sua tarefa é extrair as informações e conceitos mais importantes do material fornecido e transformá-los em até 15 cartões de pergunta e resposta diretas para memorização.
     
-    O texto base de estudo é:
-    "{ $contextText }"
+    ${contextText != null && contextText.isNotEmpty ? 'O texto base de estudo acompanhando é:\n"{ $contextText }"' : ''}
     
     **CRÍTICO:** Sua resposta OBRIGATORIAMENTE deve ser um "array" JSON limpo estruturando objetos com as chaves exatas "question" e "answer".
     Não utilize introduções de diálogo nem markdown (` ```json `), apenas retorne a lista pronta para os parsers do Dart lerem.
@@ -84,7 +86,13 @@ class GeminiAiService {
     ''';
 
     try {
-      final content = [Content.text(prompt)];
+      final parts = <Part>[TextPart(prompt)];
+
+      if (fileBytes != null && mimeType != null) {
+        parts.add(DataPart(mimeType, fileBytes));
+      }
+
+      final content = [Content.multi(parts)];
       final response = await _model.generateContent(content);
 
       if (response.text == null) {
