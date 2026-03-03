@@ -10,6 +10,7 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
   FlashcardBloc(this._repository) : super(FlashcardInitial()) {
     on<LoadFlashcards>(_onLoadFlashcards);
     on<CreateFlashcard>(_onCreateFlashcard);
+    on<CreateFlashcardsBulk>(_onCreateFlashcardsBulk);
     on<DeleteFlashcard>(_onDeleteFlashcard);
     on<LoadStudySession>(_onLoadStudySession);
     on<ReviewFlashcard>(_onReviewFlashcard);
@@ -38,6 +39,20 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
       ..answer = event.answer;
 
     await _repository.saveFlashcard(card);
+    add(LoadFlashcards(event.deckId));
+  }
+
+  Future<void> _onCreateFlashcardsBulk(
+    CreateFlashcardsBulk event,
+    Emitter<FlashcardState> emit,
+  ) async {
+    for (var item in event.cards) {
+      final card = Flashcard()
+        ..deckId = event.deckId
+        ..question = item['question']!
+        ..answer = item['answer']!;
+      await _repository.saveFlashcard(card);
+    }
     add(LoadFlashcards(event.deckId));
   }
 

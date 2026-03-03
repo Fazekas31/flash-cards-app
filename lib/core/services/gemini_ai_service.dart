@@ -1,5 +1,6 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
 
 class GeminiAiService {
   late GenerativeModel _model;
@@ -58,6 +59,57 @@ class GeminiAiService {
       return response.text!;
     } catch (e) {
       return 'Erro técnico: O modelo selecionado não foi reconhecido ou há um problema na Key. Detalhes: $e';
+    }
+  }
+
+  Future<List<Map<String, String>>> generateFlashcards(
+    String contextText,
+  ) async {
+    final prompt =
+        '''
+    Aja como um criador e especialista de flashcards de repetição espaçada. O usuário fornecerá um texto longo, como anotações gerais ou um PDF colado.
+    Sua tarefa é extrair as informações e conceitos mais importantes desse texto e transformá-los em até 15 cartões de pergunta e resposta diretas para memorização.
+    
+    O texto base de estudo é:
+    "{ $contextText }"
+    
+    **CRÍTICO:** Sua resposta OBRIGATORIAMENTE deve ser um "array" JSON limpo estruturando objetos com as chaves exatas "question" e "answer".
+    Não utilize introduções de diálogo nem markdown (` ```json `), apenas retorne a lista pronta para os parsers do Dart lerem.
+    
+    Exemplo Escrito Exato para você seguir:
+    [
+      {"question": "Qual a capital do Brasil?", "answer": "Brasília"},
+      {"question": "Quem formulou a Teoria da Relatividade?", "answer": "Albert Einstein"}
+    ]
+    ''';
+
+    try {
+      final content = [Content.text(prompt)];
+      final response = await _model.generateContent(content);
+
+      if (response.text == null) {
+        throw Exception('Sem resposta do Gemini.');
+      }
+
+      // Evita vazamento se o Gemini insistir no markdown apesar das instruções
+      final cleanText = response.text!
+          .replaceAll('```json', '')
+          .replaceAll('```', '')
+          .trim();
+      final List<dynamic> decodedList = jsonDecode(cleanText);
+
+      return decodedList
+          .map(
+            (item) => {
+              "question": item["question"].toString(),
+              "answer": item["answer"].toString(),
+            },
+          )
+          .toList();
+    } catch (e) {
+      throw Exception(
+        'Não foi possível gerar os cartões. O texto enviado pode estar muito confuso ou houve falha na formatação. Detalhes: $e',
+      );
     }
   }
 }

@@ -6,6 +6,7 @@ import '../bloc/flashcard_bloc.dart';
 import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
 import '../../../../core/widgets/linkable_text_widget.dart';
+import '../../../../core/services/gemini_ai_service.dart';
 
 class DeckDetailPage extends StatefulWidget {
   final int deckId;
@@ -74,6 +75,117 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
               child: Text(AppLocalizations.of(context)!.flashcardAdd),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showGenerateCardsBottomSheet() {
+    final textController = TextEditingController();
+    bool isLoading = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 24,
+                right: 24,
+                top: 24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Gerador Mágico (IA) ✨',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0B194C),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Cole um resumo de anotações ou parte do texto de um PDF. O Gemini irá dissecar o conhecimento e gerar cartões de repetição!',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: textController,
+                    maxLines: 6,
+                    decoration: InputDecoration(
+                      hintText:
+                          'Ex: "A fotossíntese é o processo biológico onde a planta..."\\nCole o trecho completo aqui.',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        if (textController.text.trim().isEmpty) return;
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        try {
+                          final cards = await GeminiAiService()
+                              .generateFlashcards(textController.text.trim());
+
+                          if (mounted) {
+                            context.read<FlashcardBloc>().add(
+                              CreateFlashcardsBulk(widget.deckId, cards),
+                            );
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '⚡ \${cards.length} cartões gerados com sucesso!',
+                                ),
+                                backgroundColor: const Color(0xFF76E0A3),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.auto_awesome),
+                      label: const Text('Gerar Cartões Imediatamente'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0B194C),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -191,11 +303,29 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddCardDialog,
-        backgroundColor: const Color(0xFF76E0A3),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        child: const Icon(Icons.add, color: Color(0xFF0B194C)),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: "ai_deck_btn",
+            onPressed: _showGenerateCardsBottomSheet,
+            backgroundColor: const Color(0xFF0B194C),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Icon(Icons.auto_awesome, color: Colors.white),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: "add_card_btn",
+            onPressed: _showAddCardDialog,
+            backgroundColor: const Color(0xFF76E0A3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Icon(Icons.add, color: Color(0xFF0B194C)),
+          ),
+        ],
       ),
     );
   }

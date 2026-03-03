@@ -19,6 +19,12 @@ class CreateFlashcard extends FlashcardEvent {
   CreateFlashcard(this.deckId, this.question, this.answer);
 }
 
+class CreateFlashcardsBulk extends FlashcardEvent {
+  final int deckId;
+  final List<Map<String, String>> cards;
+  CreateFlashcardsBulk(this.deckId, this.cards);
+}
+
 class DeleteFlashcard extends FlashcardEvent {
   final int flashcardId;
   DeleteFlashcard(this.flashcardId);
