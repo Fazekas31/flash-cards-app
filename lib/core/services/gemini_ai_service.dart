@@ -18,7 +18,15 @@ class GeminiAiService {
     _model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
   }
 
-  Future<String> explainFlashcardTheme(String question, String answer) async {
+  Future<String> explainFlashcardTheme(
+    String question,
+    String answer, {
+    bool isError = false,
+  }) async {
+    final contextPrompt = isError
+        ? "O aluno acabou de INFORMAR QUE ERROU este flashcard. Dê um incentivo rápido e amigável e explique o conceito de forma simples para que ele compreenda o erro e acerte na próxima vez."
+        : "O aluno quer saber um pouco mais sobre o contexto dessa resposta. Vá um pouco além da simples resposta.";
+
     final prompt =
         '''
     Aja como um professor particular altamente prestativo que está ensinando um estudante por meio de Flashcards do método de repetição espaçada.
@@ -27,7 +35,9 @@ class GeminiAiService {
     Pergunta: "$question"
     Resposta associada: "$answer"
 
-    Sua tarefa: Fornecer uma breve explicação de contextualização super didática que vá um pouco além da simples resposta. Explique **POR QUE** essa é a resposta para a pergunta, fornecendo uma pequena curiosidade, fórmula ou fato atrelado para ajudar a "cimentar" o aprendizado na memória de longo prazo do aluno.
+    Contexto da requisição: $contextPrompt
+
+    Sua tarefa: Fornecer uma breve explicação super didática. Explique **POR QUE** essa é a resposta para a pergunta, fornecendo uma pequena curiosidade, fórmula ou fato atrelado para ajudar a "cimentar" o aprendizado na memória de longo prazo do aluno.
     
     Orientações de Formatação:
     * Mantenha seu texto em menos de 200 palavras.

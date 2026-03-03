@@ -36,8 +36,20 @@ class _StudySessionPageState extends State<StudySessionPage> {
     }
   }
 
-  void _showGeminiExplanation(BuildContext context, Flashcard card) {
-    showModalBottomSheet(
+  void _handleReview(Flashcard card, int quality) async {
+    if (quality == 0) {
+      // Opção 2: Se errou (qualidade 0), explica antes de pular
+      await _showGeminiExplanation(context, card, isError: true);
+    }
+    _reviewCard(card, quality);
+  }
+
+  Future<void> _showGeminiExplanation(
+    BuildContext context,
+    Flashcard card, {
+    bool isError = false,
+  }) {
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -78,6 +90,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                       future: GeminiAiService().explainFlashcardTheme(
                         card.question,
                         card.answer,
+                        isError: isError,
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -323,7 +336,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                         context,
                                       )!.studyQualityAgain,
                                       const Color(0xFFFA7673),
-                                      () => _reviewCard(currentCard, 0),
+                                      () => _handleReview(currentCard, 0),
                                     ),
                                     const SizedBox(width: 8),
                                     _reviewButton(
@@ -331,7 +344,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                         context,
                                       )!.studyQualityHard,
                                       const Color(0xFFFFB470),
-                                      () => _reviewCard(currentCard, 1),
+                                      () => _handleReview(currentCard, 1),
                                     ),
                                     const SizedBox(width: 8),
                                     _reviewButton(
@@ -339,7 +352,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                         context,
                                       )!.studyQualityGood,
                                       const Color(0xFF76E0A3),
-                                      () => _reviewCard(currentCard, 2),
+                                      () => _handleReview(currentCard, 2),
                                     ),
                                     const SizedBox(width: 8),
                                     _reviewButton(
@@ -347,7 +360,7 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                         context,
                                       )!.studyQualityEasy,
                                       const Color(0xFF0B194C),
-                                      () => _reviewCard(currentCard, 3),
+                                      () => _handleReview(currentCard, 3),
                                     ),
                                   ],
                                 ),
