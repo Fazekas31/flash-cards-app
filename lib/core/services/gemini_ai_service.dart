@@ -24,10 +24,15 @@ class GeminiAiService {
     String question,
     String answer, {
     bool isError = false,
+    String? languageCode,
   }) async {
     final contextPrompt = isError
         ? "O aluno acabou de INFORMAR QUE ERROU este flashcard. Dê um incentivo rápido e amigável e explique o conceito de forma simples para que ele compreenda o erro e acerte na próxima vez."
         : "O aluno quer saber um pouco mais sobre o contexto dessa resposta. Vá um pouco além da simples resposta.";
+
+    final langInstruction = languageCode != null
+        ? "\nCRÍTICO: O estudante está utilizando o app no idioma '$languageCode'. Portanto, a SUA RESPOSTA DEVE SER ESTRITAMENTE NESTE IDIOMA (Ex: responda em Inglês se for 'en')."
+        : "";
 
     final prompt =
         '''
@@ -37,7 +42,7 @@ class GeminiAiService {
     Pergunta: "$question"
     Resposta associada: "$answer"
 
-    Contexto da requisição: $contextPrompt
+    Contexto da requisição: $contextPrompt$langInstruction
 
     Sua tarefa: Fornecer uma breve explicação super didática. Explique **POR QUE** essa é a resposta para a pergunta, fornecendo uma pequena curiosidade, fórmula ou fato atrelado para ajudar a "cimentar" o aprendizado na memória de longo prazo do aluno.
     
@@ -67,11 +72,17 @@ class GeminiAiService {
     String? contextText,
     Uint8List? fileBytes,
     String? mimeType,
+    String? languageCode,
   }) async {
+    final langInstruction = languageCode != null
+        ? "\n**REGRA DE IDIOMA**: O usuário está utilizando o aplicativo no idioma '$languageCode' (ISO Code). Você DEVE ABSOLUTAMENTE escrever as perguntas e respostas (question and answer) usando ESTE EXATO IDIOMA '$languageCode'."
+        : "";
+
     final prompt =
         '''
     Aja como um criador e especialista de flashcards de repetição espaçada. O usuário fornecerá um texto, arquivo ou imagem com anotações.
     Sua tarefa é extrair as informações e conceitos mais importantes do material fornecido e transformá-los em até 15 cartões de pergunta e resposta diretas para memorização.
+    $langInstruction
     
     ${contextText != null && contextText.isNotEmpty ? 'O texto base de estudo acompanhando é:\n"{ $contextText }"' : ''}
     

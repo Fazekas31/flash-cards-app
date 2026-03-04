@@ -70,9 +70,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Professor IA 🤖',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.aiTeacher,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF0B194C),
@@ -91,26 +91,29 @@ class _StudySessionPageState extends State<StudySessionPage> {
                         card.question,
                         card.answer,
                         isError: isError,
+                        languageCode: Localizations.localeOf(
+                          context,
+                        ).languageCode,
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
+                          return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                CircularProgressIndicator(
+                                const CircularProgressIndicator(
                                   color: Color(0xFF76E0A3),
                                 ),
-                                SizedBox(height: 16),
-                                Text('Analisando o cartão...'),
+                                const SizedBox(height: 16),
+                                Text(AppLocalizations.of(context)!.aiAnalyzing),
                               ],
                             ),
                           );
                         } else if (snapshot.hasError) {
                           return Center(
                             child: Text(
-                              'Erro: \${snapshot.error}',
+                              '${AppLocalizations.of(context)!.aiExplainError} ${snapshot.error}',
                               style: const TextStyle(color: Colors.red),
                             ),
                           );
@@ -300,9 +303,11 @@ class _StudySessionPageState extends State<StudySessionPage> {
                                     Icons.auto_awesome,
                                     color: Color(0xFF0B194C),
                                   ),
-                                  label: const Text(
-                                    'Explique-me Melhor (IA)',
-                                    style: TextStyle(
+                                  label: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.aiExplainButton,
+                                    style: const TextStyle(
                                       color: Color(0xFF0B194C),
                                       fontWeight: FontWeight.bold,
                                     ),

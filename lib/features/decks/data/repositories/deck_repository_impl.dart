@@ -23,6 +23,7 @@ class DeckRepositoryImpl implements DeckRepository {
   @override
   Future<int> saveDeck(Deck deck) async {
     deck.updatedAt = DateTime.now();
+    deck.needsSync = true;
     return _isar.writeTxn(() async {
       return _isar.decks.put(deck);
     });

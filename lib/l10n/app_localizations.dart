@@ -361,6 +361,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Easy'**
   String get studyQualityEasy;
+
+  /// No description provided for @aiTeacher.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Teacher 🤖'**
+  String get aiTeacher;
+
+  /// No description provided for @aiAnalyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing card...'**
+  String get aiAnalyzing;
+
+  /// No description provided for @aiExplainError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error:'**
+  String get aiExplainError;
+
+  /// No description provided for @aiExplainButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Better (AI)'**
+  String get aiExplainButton;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,7 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
     on<DeleteFlashcard>(_onDeleteFlashcard);
     on<LoadStudySession>(_onLoadStudySession);
     on<ReviewFlashcard>(_onReviewFlashcard);
+    on<UpdateFlashcard>(_onUpdateFlashcard);
   }
 
   Future<void> _onLoadFlashcards(
@@ -66,6 +67,14 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
       await _repository.deleteFlashcard(event.flashcardId);
       add(LoadFlashcards(deckId));
     }
+  }
+
+  Future<void> _onUpdateFlashcard(
+    UpdateFlashcard event,
+    Emitter<FlashcardState> emit,
+  ) async {
+    await _repository.saveFlashcard(event.flashcard);
+    add(LoadFlashcards(event.flashcard.deckId));
   }
 
   Future<void> _onLoadStudySession(

@@ -42,5 +42,9 @@
   "studyQualityAgain": "Again",
   "studyQualityHard": "Hard",
   "studyQualityGood": "Good",
-  "studyQualityEasy": "Easy"
+  "studyQualityEasy": "Easy",
+  "aiTeacher": "AI Teacher 🤖",
+  "aiAnalyzing": "Analyzing card...",
+  "aiExplainError": "Error:",
+  "aiExplainButton": "Explain Better (AI)"
 }

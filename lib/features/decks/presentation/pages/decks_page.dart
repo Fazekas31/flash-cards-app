@@ -9,6 +9,7 @@ import '../bloc/deck_state.dart';
 import '../../../../core/services/sync_service.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
+import '../../domain/models/deck.dart';
 
 class DecksPage extends StatefulWidget {
   const DecksPage({super.key});
@@ -68,6 +69,62 @@ class _DecksPageState extends State<DecksPage> {
                 Navigator.pop(context);
               },
               child: Text(AppLocalizations.of(context)!.deckCreate),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditDeckDialog(Deck deck) {
+    final nameController = TextEditingController(text: deck.name);
+    final descController = TextEditingController(text: deck.description ?? '');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(
+              context,
+            )!.deckNew.replaceAll('Novo', 'Editar').replaceAll('New', 'Edit'),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.deckName,
+                ),
+              ),
+              TextField(
+                controller: descController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.deckDescription,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.deckCancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.trim().isNotEmpty) {
+                  deck.name = nameController.text.trim();
+                  deck.description = descController.text.trim();
+                  context.read<DeckBloc>().add(UpdateDeck(deck));
+                }
+                Navigator.pop(context);
+              },
+              child: Text(
+                AppLocalizations.of(context)!.deckCreate
+                    .replaceAll('Criar', 'Salvar')
+                    .replaceAll('Create', 'Save'),
+              ),
             ),
           ],
         );
@@ -144,21 +201,55 @@ class _DecksPageState extends State<DecksPage> {
                     onTap: () {
                       context.push('/study/${deck.id}');
                     },
-                    onLongPress: () {
-                      context.read<DeckBloc>().add(DeleteDeck(deck.id));
-                    },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            deck.name,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  color: const Color(0xFF0B194C),
-                                  fontWeight: FontWeight.w500,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  deck.name,
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        color: const Color(0xFF0B194C),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                 ),
+                              ),
+                              PopupMenuButton<String>(
+                                padding: EdgeInsets.zero,
+                                onSelected: (value) {
+                                  if (value == 'edit') {
+                                    _showEditDeckDialog(deck);
+                                  } else if (value == 'delete') {
+                                    context.read<DeckBloc>().add(
+                                      DeleteDeck(deck.id),
+                                    );
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           if (deck.description != null)

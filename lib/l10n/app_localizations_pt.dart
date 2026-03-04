@@ -143,4 +143,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get studyQualityEasy => 'Fácil';
+
+  @override
+  String get aiTeacher => 'Professor IA 🤖';
+
+  @override
+  String get aiAnalyzing => 'Analisando o cartão...';
+
+  @override
+  String get aiExplainError => 'Erro:';
+
+  @override
+  String get aiExplainButton => 'Explique-me Melhor (IA)';
 }

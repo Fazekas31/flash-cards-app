@@ -35,3 +35,8 @@ class ReviewFlashcard extends FlashcardEvent {
   final int quality;
   ReviewFlashcard(this.flashcard, this.quality);
 }
+
+class UpdateFlashcard extends FlashcardEvent {
+  final Flashcard flashcard;
+  UpdateFlashcard(this.flashcard);
+}

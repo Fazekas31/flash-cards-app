@@ -28,6 +28,7 @@ class FlashcardRepositoryImpl implements FlashcardRepository {
   @override
   Future<int> saveFlashcard(Flashcard flashcard) async {
     flashcard.updatedAt = DateTime.now();
+    flashcard.needsSync = true;
     return _isar.writeTxn(() async {
       return _isar.flashcards.put(flashcard);
     });

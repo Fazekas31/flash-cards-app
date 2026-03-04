@@ -11,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:typed_data';
+import '../../domain/models/flashcard.dart';
 
 class DeckDetailPage extends StatefulWidget {
   final int deckId;
@@ -77,6 +78,67 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                 Navigator.pop(context);
               },
               child: Text(AppLocalizations.of(context)!.flashcardAdd),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditCardDialog(Flashcard card) {
+    final qController = TextEditingController(text: card.question);
+    final aController = TextEditingController(text: card.answer);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.flashcardNew
+                .replaceAll('Novo', 'Editar')
+                .replaceAll('New', 'Edit'),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: qController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.flashcardQuestion,
+                ),
+                minLines: 2,
+                maxLines: 4,
+              ),
+              TextField(
+                controller: aController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.flashcardAnswer,
+                ),
+                minLines: 2,
+                maxLines: 4,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.deckCancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (qController.text.trim().isNotEmpty &&
+                    aController.text.trim().isNotEmpty) {
+                  card.question = qController.text.trim();
+                  card.answer = aController.text.trim();
+                  context.read<FlashcardBloc>().add(UpdateFlashcard(card));
+                }
+                Navigator.pop(context);
+              },
+              child: Text(
+                AppLocalizations.of(context)!.flashcardAdd
+                    .replaceAll('Adicionar', 'Salvar')
+                    .replaceAll('Add', 'Save'),
+              ),
             ),
           ],
         );
@@ -238,6 +300,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                                 contextText: textController.text.trim(),
                                 fileBytes: attachedFileBytes,
                                 mimeType: attachedMimeType,
+                                languageCode: Localizations.localeOf(
+                                  context,
+                                ).languageCode,
                               );
 
                           if (mounted) {
@@ -375,16 +440,30 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                                   ),
                                 ],
                               ),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Color(0xFF76E0A3),
-                                ),
-                                onPressed: () {
-                                  context.read<FlashcardBloc>().add(
-                                    DeleteFlashcard(card.id),
-                                  );
-                                },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      _showEditCardDialog(card);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color(0xFF76E0A3),
+                                    ),
+                                    onPressed: () {
+                                      context.read<FlashcardBloc>().add(
+                                        DeleteFlashcard(card.id),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ),

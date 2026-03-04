@@ -143,4 +143,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studyQualityEasy => 'Easy';
+
+  @override
+  String get aiTeacher => 'AI Teacher 🤖';
+
+  @override
+  String get aiAnalyzing => 'Analyzing card...';
+
+  @override
+  String get aiExplainError => 'Error:';
+
+  @override
+  String get aiExplainButton => 'Explain Better (AI)';
 }

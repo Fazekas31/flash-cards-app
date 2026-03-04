@@ -42,5 +42,9 @@
   "studyQualityAgain": "Repetir",
   "studyQualityHard": "Difícil",
   "studyQualityGood": "Bom",
-  "studyQualityEasy": "Fácil"
+  "studyQualityEasy": "Fácil",
+  "aiTeacher": "Professor IA 🤖",
+  "aiAnalyzing": "Analisando o cartão...",
+  "aiExplainError": "Erro:",
+  "aiExplainButton": "Explique-me Melhor (IA)"
 }
