@@ -46,5 +46,20 @@
   "aiTeacher": "AI Teacher 🤖",
   "aiAnalyzing": "Analyzing card...",
   "aiExplainError": "Error:",
-  "aiExplainButton": "Explain Better (AI)"
+  "aiExplainButton": "Explain Better (AI)",
+  "magicGeneratorTitle": "Magic Generator (AI) ✨",
+  "magicGeneratorSubtitle": "Paste notes or part of a PDF text. Gemini will dissect the knowledge and generate spaced repetition cards!",
+  "magicGeneratorInputHint": "Ex: \"Photosynthesis is the biological process where the plant...\"\nPaste text or attach a file.",
+  "magicGeneratorCamera": "Camera",
+  "magicGeneratorAttachment": "PDF / Image",
+  "magicGeneratorAttachmentReady": "📎 Attachment ready:",
+  "magicGeneratorSuccess": "⚡ {count} cards generated successfully!",
+  "@magicGeneratorSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "magicGeneratorButton": "Generate Cards Immediately"
 }

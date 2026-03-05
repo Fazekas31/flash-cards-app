@@ -50,16 +50,14 @@ GoRouter createRouter(bool isFirstLaunch, AuthBloc authBloc) {
       GoRoute(
         path: '/study/:deckId',
         builder: (context, state) {
-          final deckId =
-              int.tryParse(state.pathParameters['deckId'] ?? '') ?? 0;
+          final deckId = state.pathParameters['deckId'] ?? '';
           return DeckDetailPage(deckId: deckId);
         },
       ),
       GoRoute(
         path: '/study/:deckId/session',
         builder: (context, state) {
-          final deckId =
-              int.tryParse(state.pathParameters['deckId'] ?? '') ?? 0;
+          final deckId = state.pathParameters['deckId'] ?? '';
           return StudySessionPage(deckId: deckId);
         },
       ),

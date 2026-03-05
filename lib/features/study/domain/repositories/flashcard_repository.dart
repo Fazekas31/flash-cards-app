@@ -1,10 +1,9 @@
 import '../models/flashcard.dart';
 
 abstract class FlashcardRepository {
-  Future<List<Flashcard>> getFlashcardsByDeck(int deckId);
-  Future<Flashcard?> getFlashcardById(int id);
-  Future<int> saveFlashcard(Flashcard flashcard);
-  Future<void> deleteFlashcard(int id);
-  Future<List<Flashcard>> getStudySession(int deckId, {int limit = 20});
-  Future<List<Flashcard>> getUnsyncedFlashcards();
+  Future<List<Flashcard>> getFlashcardsByDeck(String deckId);
+  Future<Flashcard?> getFlashcardById(String id);
+  Future<void> saveFlashcard(Flashcard flashcard);
+  Future<void> deleteFlashcard(String id);
+  Future<List<Flashcard>> getStudySession(String deckId, {int limit = 20});
 }

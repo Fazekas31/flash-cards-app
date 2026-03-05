@@ -385,6 +385,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Explain Better (AI)'**
   String get aiExplainButton;
+
+  /// No description provided for @magicGeneratorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Magic Generator (AI) ✨'**
+  String get magicGeneratorTitle;
+
+  /// No description provided for @magicGeneratorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste notes or part of a PDF text. Gemini will dissect the knowledge and generate spaced repetition cards!'**
+  String get magicGeneratorSubtitle;
+
+  /// No description provided for @magicGeneratorInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ex: \"Photosynthesis is the biological process where the plant...\"\nPaste text or attach a file.'**
+  String get magicGeneratorInputHint;
+
+  /// No description provided for @magicGeneratorCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get magicGeneratorCamera;
+
+  /// No description provided for @magicGeneratorAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF / Image'**
+  String get magicGeneratorAttachment;
+
+  /// No description provided for @magicGeneratorAttachmentReady.
+  ///
+  /// In en, this message translates to:
+  /// **'📎 Attachment ready:'**
+  String get magicGeneratorAttachmentReady;
+
+  /// No description provided for @magicGeneratorSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'⚡ {count} cards generated successfully!'**
+  String magicGeneratorSuccess(int count);
+
+  /// No description provided for @magicGeneratorButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Cards Immediately'**
+  String get magicGeneratorButton;
 }
 
 class _AppLocalizationsDelegate

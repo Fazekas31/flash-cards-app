@@ -1,57 +1,55 @@
-import 'package:isar/isar.dart';
-import '../../../../core/services/local_db_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/deck.dart';
 import '../../domain/repositories/deck_repository.dart';
 
 class DeckRepositoryImpl implements DeckRepository {
-  final LocalDbService _dbService;
+  final SupabaseClient _supabaseClient;
 
-  DeckRepositoryImpl(this._dbService);
-
-  Isar get _isar => _dbService.isar;
+  DeckRepositoryImpl(this._supabaseClient);
 
   @override
   Future<List<Deck>> getDecks() async {
-    return _isar.decks.filter().isDeletedEqualTo(false).findAll();
+    final response = await _supabaseClient
+        .from('decks')
+        .select()
+        .eq('is_deleted', false);
+    return (response as List).map((json) => Deck.fromJson(json)).toList();
   }
 
   @override
-  Future<Deck?> getDeckById(int id) async {
-    return _isar.decks.get(id);
+  Future<Deck?> getDeckById(String id) async {
+    final response = await _supabaseClient
+        .from('decks')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
+    if (response == null) return null;
+    return Deck.fromJson(response);
   }
 
   @override
-  Future<int> saveDeck(Deck deck) async {
+  Future<void> saveDeck(Deck deck) async {
     deck.updatedAt = DateTime.now();
-    deck.needsSync = true;
-    return _isar.writeTxn(() async {
-      return _isar.decks.put(deck);
-    });
+    await _supabaseClient.from('decks').upsert(deck.toJson());
   }
 
   @override
-  Future<void> deleteDeck(int id) async {
-    final deck = await getDeckById(id);
-    if (deck != null) {
-      deck.isDeleted = true;
-      deck.needsSync = true;
-      deck.updatedAt = DateTime.now();
-      await _isar.writeTxn(() async {
-        await _isar.decks.put(deck);
-      });
-    }
-  }
-
-  @override
-  Future<List<Deck>> getUnsyncedDecks() async {
-    return _isar.decks.filter().needsSyncEqualTo(true).findAll();
+  Future<void> deleteDeck(String id) async {
+    await _supabaseClient
+        .from('decks')
+        .update({
+          'is_deleted': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', id);
   }
 
   @override
   Stream<List<Deck>> watchDecks() {
-    return _isar.decks
-        .filter()
-        .isDeletedEqualTo(false)
-        .watch(fireImmediately: true);
+    return _supabaseClient
+        .from('decks')
+        .stream(primaryKey: ['id'])
+        .eq('is_deleted', false)
+        .map((data) => data.map((json) => Deck.fromJson(json)).toList());
   }
 }

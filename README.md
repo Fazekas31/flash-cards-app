@@ -1,23 +1,20 @@
-# 🧠 Alfa Study Cards (Offline-First)
+# 🧠 Alfa Study Cards (Supabase-First)
 
-Um aplicativo de Flashcards moderno e inteligente construído com **Flutter**, **Isar Database** (Armazenamento Local) e **Supabase** (Sincronização em Nuvem e Autenticação).
+Um aplicativo de Flashcards moderno e inteligente construído com **Flutter** e **Supabase** (Sincronização em Nuvem e Autenticação).
 
-O aplicativo adota a arquitetura **Feature-First** para escalabilidade, utilizando o `flutter_bloc` para todo o gerenciamento de estado e `go_router` para navegação inteligente e redirecionamentos seguros baseados no estado do usuário.
+O aplicativo adota a arquitetura **Feature-First** para escalabilidade, utilizando o `flutter_bloc` para todo o gerenciamento de estado e `go_router` para navegação inteligente e redirecionamentos seguros baseados no estado do usuário. Efetua cálculos e carregamentos de forma dinâmica em nuvem para garantir a persistência imediata dos seus estudos.
 
 ## ✨ Features
 
-- 📶 **Offline-First:** O aplicativo usa o `Isar` como banco de dados principal de alta performance. Os usuários podem acessar decks, criar flashcards e realizar sessões de estudo sem nenhuma conexão com a internet.
-- ☁️ **Sincronização em Nuvem:** Quando há conectividade, o app sincroniza as mudanças locais para o banco em nuvem PostgreSQL (`Supabase`), de forma invisível via `SyncService`.
-- 🔐 **Autenticação Segura:** Criação de conta e login seguro pela infraestrutura do `Supabase Auth`.
+- ☁️ **Supabase-First:** O aplicativo se conecta diretamente ao banco de dados PostgreSQL na nuvem do Supabase, lendo e escrevendo categorias e flashcards em tempo real, garantindo que seu progresso jamais seja perdido.
+- 🔐 **Autenticação Segura:** Criação de conta e login seguro pela infraestrutura nativa do `Supabase Auth`.
 - 🔁 **Spaced Repetition (SM-2):** Algoritmo inteligente que ajusta dinamicamente a próxima data de revisão do cartão dependendo do progresso do usuário (Novamente, Difícil, Bom, Fácil).
 - 🖼️ **Suporte a Imagens:** Anexe fotos da galeria ou câmera diretamente nos seus flashcards para uma experiência de estudo mais visual.
-- � **Suporte a Arquivos PDF:** Importe materiais de estudo em PDF diretamente no aplicativo.
-- �🔄 **Animações de Cartão (Flip):** Os flashcards possuem animações de virada (flip) fluidas para revelar as respostas com elegância.
+- 📄 **Suporte a Arquivos PDF:** Importe materiais de estudo em PDF diretamente no aplicativo via File Picker.
+- 🔄 **Animações de Cartão (Flip):** Os flashcards possuem animações de virada (flip) fluidas para revelar as respostas com elegância.
 - 📁 **Organização por Categorias:** Agrupe seus flashcards em "Decks" (baralhos) temáticos para facilitar o foco em determinadas matérias.
-- 🤖 **Professor Particular de IA (Gemini):** Integração com o Google Gemini 2.5 Flash! Se você errar um cartão ou pedir uma explicação extra, a IA entra em ação fornecendo contexto didático, Markdown e até enviando fontes da internet em hyperlinks azuis.
-- 🔔 **Notificações Locais Inteligentes:** Um serviço em background configurado no relógio do celular emite um alerta diário programado lembrando o aluno de bater sua meta do dia de cartões acumulados.
-- 🌍 **Internacionalização (i18n):** Suporte nativo completo a Inglês (EN) e Português do Brasil (PT-BR) rodando em tempo real.
-- 🔗 **Detecção Automática de Hyperlinks:** As cartas do baralho e a tela da Inteligência Artificial renderizam URLs interativas que abrem nativamente no navegador do usuário (`url_launcher`).
+- 🤖 **Professor Particular de IA (Gemini):** Integração com o Google Gemini 2.5 Flash! É possível gerar centenas de cartões de uma vez anexando seus PDFs, e se você errar um cartão ou pedir uma explicação extra durante os estudos, a IA entra em ação fornecendo contexto didático, Markdown estruturado e até hiperlinks da internet.
+- 🌍 **Internacionalização (i18n):** Suporte nativo completo a Inglês (EN) e Português do Brasil (PT-BR) rodando e reagindo em tempo real ao layout e interações da Inteligência Artificial.
 - 🎨 **UI/UX Modernizado:** Customização completa de Tema, Paleta de Cores, Sombras (Elevation), App Icon nativo e Splash Screen de Bootup (Design System focado no estudante).
 - 🚀 **Onboarding Interativo:** Tutorial na primeira execução para ajudar usuários a entenderem o fluxo do aplicativo.
 
@@ -26,9 +23,9 @@ O aplicativo adota a arquitetura **Feature-First** para escalabilidade, utilizan
 - **Framework:** Flutter
 - **State Management:** `flutter_bloc`
 - **Routing:** `go_router`
-- **Local DB:** `isar` (Altíssima Performance / NoSQL)
-- **Backend/Auth:** `supabase_flutter` 
+- **Backend/Auth/DB:** `supabase_flutter` 
 - **AI Integration:** `google_generative_ai` (Gemini API)
+- **Localizations:** `flutter_localizations`
 - **Environment:** `flutter_dotenv`
 
 ## 📂 Arquitetura (Feature-First)
@@ -37,16 +34,16 @@ O aplicativo adota a arquitetura **Feature-First** para escalabilidade, utilizan
 lib/
 ├── core/                   # Serviços e configurações vitais e reutilizáveis
 │   ├── constants/          # Constantes globais (ex: app_constants.dart lendo do .env)
-│   ├── routes/             # App Router (`go_router`) e guards
-│   └── services/           # Serviços (SyncService, LocalDbService, GeminiAiService, NotificationService)
+│   ├── routes/             # App Router (`go_router`) e guards de redirecionamento (Supabase Auth)
+│   └── services/           # Serviços base (Supabase client, GeminiAiService)
 │
 ├── features/               # Domínios independentes de negócios
-│   ├── auth/               # Responsável por Login, Registro e Controle de Sessão
+│   ├── auth/               # Responsável por Login, Registro e Controle de Sessão no BLoC
 │   ├── onboarding/         # Tela inicial de apresentação
-│   ├── decks/              # Gestão de categorias (Listar, Criar, Atualizar, Deletar)
-│   └── study/              # Visualização de flashcards e lógica SM-2 (Repetição Espaçada)
+│   ├── decks/              # Gestão de categorias em DB remoto (Listar, Criar, Atualizar, Deletar)
+│   └── study/              # Visualização de flashcards em memória e recálculo algorítimo SM-2 na nuvem
 │
-└── main.dart               # Bootstrap do Bloc, Isar, DotEnv, Notifications e Supabase
+└── main.dart               # Bootstrap do Bloc, DotEnv, i18n e conector do Supabase.initialize()
 ```
 
 ---
@@ -56,9 +53,9 @@ lib/
 Pronto para executar o aplicativo na sua máquina local ou emulador? 
 
 ### 1. Requisitos Prévios
-Certifique-se de que a instalação do Flutter em sua máquina atenda aos requisitos da versão atual configurada no `pubspec.yaml` e você tenha um Emulator/Dispositivo Físico pronto.
+Certifique-se de que a instalação do Flutter em sua máquina atenda aos requisitos da versão e você tenha um Emulator/Dispositivo Físico configurado (.
 
-### 2. Configurando o Backend Móvel e Inteligência Artificial
+### 2. Configurando o Backend e Inteligência Artificial
 
 1. Crie uma nova conta no [Supabase](https://supabase.com/).
 2. Crie um novo projeto, e vá na engrenagem de configurações **(Project Settings) -> API**. Lá você encontrará a URL e a Anon Key.
@@ -71,48 +68,52 @@ SUPABASE_ANON_KEY=Sua_Anon_Key
 GEMINI_API_KEY=Sua_Key_AizaSy...
 ```
 
-5. Vá no **SQL Editor** do Supabase e rode o script abaixo para criar as estruturas exatas necessárias na nuvem:
+5. Vá no **SQL Editor** do Supabase e rode o script inicial padrão do projeto:
 
 ```sql
--- 1. Cria a tabela de Decks 
-create table public.decks (
+-- 1. Cria a Tabela de Decks (Categorias)
+create table if not exists public.decks (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users not null,
   name text not null,
   description text,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  is_deleted boolean default false not null
 );
 
 -- 2. Cria a Tabela de Flashcards
-create table public.flashcards (
+create table if not exists public.flashcards (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users not null,
   deck_id uuid references public.decks on delete cascade not null,
   question text not null,
   answer text not null,
+  image_path text,
   ease_factor double precision default 2.5 not null,
   interval_days integer default 0 not null,
   repetitions integer default 0 not null,
   due_date timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  is_deleted boolean default false not null
 );
 
--- 3. Habilita Políticas RLS para Segurança de Dados Pessoais
+-- 3. Habilita Políticas RLS para Segurança de Dados Pessoais (Opcional/Recomendado)
 alter table public.decks enable row level security;
 alter table public.flashcards enable row level security;
 
--- (Crie as policies permitindo usuários logados manipularem APENAS dados correspondentes à coluna user_id)
-create policy "Pode inserir cards próprios" on public.flashcards for insert with check ( auth.uid() = user_id );
+-- (Crie as policies para seu RLS permitindo que auth.uid() = user_id)
 ```
 
-### 3. Rodando o Projeto
+### 3. Executando o Projeto
 
 ```sh
 # Baixe todos os pacotes das features e plugins
 flutter pub get
 
-# Gere os arquivos automatizados Isar e Localizations (*.g.dart)
-flutter pub run build_runner build --delete-conflicting-outputs
+# Gere os arquivos de traduções automatizadas AppLocalizations (i18n)
+flutter gen-l10n
 
 # Execute no Device
 flutter run
@@ -121,9 +122,10 @@ flutter run
 ---
 
 ## 🧪 Testes
-Para confirmar a integridade e precisão estrita do algoritmo de Pontuação `SM-2` da Sessão de Estudos, e a sincronização abstrata os testes foram escritos na pasta `/test`:
+
+A estabilidade matemática do algoritmo de repetição passará por testes para nos assegurar de cálculos puros dentro do BlOC e dos repositórios:
 
 ```sh
+# Teste o comportamento puro do algoritmo de estudo Spaced Repetition interagindo com a interface
 flutter test test/scoring_test.dart
-flutter test test/sync_test.dart
 ```

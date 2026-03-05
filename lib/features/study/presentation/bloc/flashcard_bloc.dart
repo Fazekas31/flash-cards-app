@@ -3,6 +3,8 @@ import '../../domain/repositories/flashcard_repository.dart';
 import '../../domain/models/flashcard.dart';
 import 'flashcard_event.dart';
 import 'flashcard_state.dart';
+import 'package:uuid/uuid.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
   final FlashcardRepository _repository;
@@ -34,10 +36,16 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
     CreateFlashcard event,
     Emitter<FlashcardState> emit,
   ) async {
-    final card = Flashcard()
-      ..deckId = event.deckId
-      ..question = event.question
-      ..answer = event.answer;
+    final card = Flashcard(
+      id: const Uuid().v4(),
+      deckId: event.deckId,
+      question: event.question,
+      answer: event.answer,
+      dueDate: DateTime.now(),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      userId: Supabase.instance.client.auth.currentUser?.id,
+    );
 
     await _repository.saveFlashcard(card);
     add(LoadFlashcards(event.deckId));
@@ -48,10 +56,16 @@ class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
     Emitter<FlashcardState> emit,
   ) async {
     for (var item in event.cards) {
-      final card = Flashcard()
-        ..deckId = event.deckId
-        ..question = item['question']!
-        ..answer = item['answer']!;
+      final card = Flashcard(
+        id: const Uuid().v4(),
+        deckId: event.deckId,
+        question: item['question']!,
+        answer: item['answer']!,
+        dueDate: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        userId: Supabase.instance.client.auth.currentUser?.id,
+      );
       await _repository.saveFlashcard(card);
     }
     add(LoadFlashcards(event.deckId));

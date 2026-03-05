@@ -13,7 +13,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StudySessionPage extends StatefulWidget {
-  final int deckId;
+  final String deckId;
   const StudySessionPage({super.key, required this.deckId});
 
   @override

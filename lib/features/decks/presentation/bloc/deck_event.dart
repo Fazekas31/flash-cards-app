@@ -21,6 +21,6 @@ class UpdateDeck extends DeckEvent {
 }
 
 class DeleteDeck extends DeckEvent {
-  final int id;
+  final String id;
   DeleteDeck(this.id);
 }

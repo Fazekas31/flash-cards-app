@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../bloc/deck_bloc.dart';
 import '../bloc/deck_event.dart';
 import '../bloc/deck_state.dart';
-import '../../../../core/services/sync_service.dart';
+
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../domain/models/deck.dart';
@@ -157,15 +157,7 @@ class _DecksPageState extends State<DecksPage> {
               ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () {
-              context.read<SyncService>().sync();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Sincronização iniciada...')),
-              );
-            },
-          ),
+
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {

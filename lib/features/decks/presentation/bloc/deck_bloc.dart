@@ -4,6 +4,8 @@ import '../../domain/repositories/deck_repository.dart';
 import '../../domain/models/deck.dart';
 import 'deck_event.dart';
 import 'deck_state.dart';
+import 'package:uuid/uuid.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DeckBloc extends Bloc<DeckEvent, DeckState> {
   final DeckRepository _repository;
@@ -35,9 +37,14 @@ class DeckBloc extends Bloc<DeckEvent, DeckState> {
   }
 
   Future<void> _onCreateDeck(CreateDeck event, Emitter<DeckState> emit) async {
-    final deck = Deck()
-      ..name = event.name
-      ..description = event.description;
+    final deck = Deck(
+      id: const Uuid().v4(),
+      name: event.name,
+      description: event.description,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      userId: Supabase.instance.client.auth.currentUser?.id,
+    );
     await _repository.saveDeck(deck);
   }
 

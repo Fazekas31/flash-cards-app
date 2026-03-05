@@ -155,4 +155,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiExplainButton => 'Explain Better (AI)';
+
+  @override
+  String get magicGeneratorTitle => 'Magic Generator (AI) ✨';
+
+  @override
+  String get magicGeneratorSubtitle =>
+      'Paste notes or part of a PDF text. Gemini will dissect the knowledge and generate spaced repetition cards!';
+
+  @override
+  String get magicGeneratorInputHint =>
+      'Ex: \"Photosynthesis is the biological process where the plant...\"\nPaste text or attach a file.';
+
+  @override
+  String get magicGeneratorCamera => 'Camera';
+
+  @override
+  String get magicGeneratorAttachment => 'PDF / Image';
+
+  @override
+  String get magicGeneratorAttachmentReady => '📎 Attachment ready:';
+
+  @override
+  String magicGeneratorSuccess(int count) {
+    return '⚡ $count cards generated successfully!';
+  }
+
+  @override
+  String get magicGeneratorButton => 'Generate Cards Immediately';
 }

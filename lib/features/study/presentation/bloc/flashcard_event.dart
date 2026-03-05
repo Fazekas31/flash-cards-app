@@ -3,30 +3,30 @@ import '../../domain/models/flashcard.dart';
 abstract class FlashcardEvent {}
 
 class LoadFlashcards extends FlashcardEvent {
-  final int deckId;
+  final String deckId;
   LoadFlashcards(this.deckId);
 }
 
 class LoadStudySession extends FlashcardEvent {
-  final int deckId;
+  final String deckId;
   LoadStudySession(this.deckId);
 }
 
 class CreateFlashcard extends FlashcardEvent {
-  final int deckId;
+  final String deckId;
   final String question;
   final String answer;
   CreateFlashcard(this.deckId, this.question, this.answer);
 }
 
 class CreateFlashcardsBulk extends FlashcardEvent {
-  final int deckId;
+  final String deckId;
   final List<Map<String, String>> cards;
   CreateFlashcardsBulk(this.deckId, this.cards);
 }
 
 class DeleteFlashcard extends FlashcardEvent {
-  final int flashcardId;
+  final String flashcardId;
   DeleteFlashcard(this.flashcardId);
 }
 

@@ -155,4 +155,32 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aiExplainButton => 'Explique-me Melhor (IA)';
+
+  @override
+  String get magicGeneratorTitle => 'Gerador Mágico (IA) ✨';
+
+  @override
+  String get magicGeneratorSubtitle =>
+      'Cole um resumo de anotações ou parte do texto de um PDF. O Gemini irá dissecar o conhecimento e gerar cartões de repetição!';
+
+  @override
+  String get magicGeneratorInputHint =>
+      'Ex: \"A fotossíntese é o processo biológico onde a planta...\"\nCole texto ou anexe um arquivo.';
+
+  @override
+  String get magicGeneratorCamera => 'Câmera';
+
+  @override
+  String get magicGeneratorAttachment => 'PDF / Imagem';
+
+  @override
+  String get magicGeneratorAttachmentReady => '📎 Anexo pronto:';
+
+  @override
+  String magicGeneratorSuccess(int count) {
+    return '⚡ $count cartões gerados com sucesso!';
+  }
+
+  @override
+  String get magicGeneratorButton => 'Gerar Cartões Imediatamente';
 }

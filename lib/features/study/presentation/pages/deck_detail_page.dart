@@ -14,7 +14,7 @@ import 'dart:typed_data';
 import '../../domain/models/flashcard.dart';
 
 class DeckDetailPage extends StatefulWidget {
-  final int deckId;
+  final String deckId;
   const DeckDetailPage({super.key, required this.deckId});
 
   @override
@@ -173,26 +173,27 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'Gerador Mágico (IA) ✨',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.magicGeneratorTitle,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0B194C),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Cole um resumo de anotações ou parte do texto de um PDF. O Gemini irá dissecar o conhecimento e gerar cartões de repetição!',
-                    style: TextStyle(color: Colors.grey),
+                  Text(
+                    AppLocalizations.of(context)!.magicGeneratorSubtitle,
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: textController,
                     maxLines: 6,
                     decoration: InputDecoration(
-                      hintText:
-                          'Ex: "A fotossíntese é o processo biológico onde a planta..."\\nCole texto ou anexe um arquivo.',
+                      hintText: AppLocalizations.of(
+                        context,
+                      )!.magicGeneratorInputHint,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -220,7 +221,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                                 }
                               },
                         icon: const Icon(Icons.camera_alt),
-                        label: const Text('Câmera'),
+                        label: Text(
+                          AppLocalizations.of(context)!.magicGeneratorCamera,
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF0F0F0),
                           foregroundColor: const Color(0xFF0B194C),
@@ -261,7 +264,11 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                                 }
                               },
                         icon: const Icon(Icons.attach_file),
-                        label: const Text('PDF / Imagem'),
+                        label: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.magicGeneratorAttachment,
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF0F0F0),
                           foregroundColor: const Color(0xFF0B194C),
@@ -273,7 +280,7 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: Text(
-                        '📎 Anexo pronto: $attachedFileName',
+                        '${AppLocalizations.of(context)!.magicGeneratorAttachmentReady} $attachedFileName',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
@@ -313,7 +320,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  '⚡ \${cards.length} cartões gerados com sucesso!',
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.magicGeneratorSuccess(cards.length),
                                 ),
                                 backgroundColor: const Color(0xFF76E0A3),
                                 behavior: SnackBarBehavior.floating,
@@ -335,7 +344,9 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
                         }
                       },
                       icon: const Icon(Icons.auto_awesome),
-                      label: const Text('Gerar Cartões Imediatamente'),
+                      label: Text(
+                        AppLocalizations.of(context)!.magicGeneratorButton,
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0B194C),
                         foregroundColor: Colors.white,

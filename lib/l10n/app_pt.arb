@@ -46,5 +46,20 @@
   "aiTeacher": "Professor IA 🤖",
   "aiAnalyzing": "Analisando o cartão...",
   "aiExplainError": "Erro:",
-  "aiExplainButton": "Explique-me Melhor (IA)"
+  "aiExplainButton": "Explique-me Melhor (IA)",
+  "magicGeneratorTitle": "Gerador Mágico (IA) ✨",
+  "magicGeneratorSubtitle": "Cole um resumo de anotações ou parte do texto de um PDF. O Gemini irá dissecar o conhecimento e gerar cartões de repetição!",
+  "magicGeneratorInputHint": "Ex: \"A fotossíntese é o processo biológico onde a planta...\"\nCole texto ou anexe um arquivo.",
+  "magicGeneratorCamera": "Câmera",
+  "magicGeneratorAttachment": "PDF / Imagem",
+  "magicGeneratorAttachmentReady": "📎 Anexo pronto:",
+  "magicGeneratorSuccess": "⚡ {count} cartões gerados com sucesso!",
+  "@magicGeneratorSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "magicGeneratorButton": "Gerar Cartões Imediatamente"
 }

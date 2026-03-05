@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_constants.dart';
-import 'core/services/local_db_service.dart';
+
 import 'core/routes/app_router.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -18,7 +18,7 @@ import 'features/study/data/repositories/flashcard_repository_impl.dart';
 import 'features/study/domain/repositories/flashcard_repository.dart';
 import 'features/decks/presentation/bloc/deck_bloc.dart';
 import 'features/study/presentation/bloc/flashcard_bloc.dart';
-import 'core/services/sync_service.dart';
+
 import 'core/localization/locale_cubit.dart';
 import 'core/services/notification_service.dart';
 
@@ -30,9 +30,6 @@ void main() async {
     url: AppConstants.supabaseUrl,
     anonKey: AppConstants.supabaseAnonKey,
   );
-
-  final localDbService = LocalDbService();
-  await localDbService.init();
 
   final prefs = await SharedPreferences.getInstance();
   final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
@@ -47,24 +44,17 @@ void main() async {
   }
 
   final authRepository = AuthRepositoryImpl(Supabase.instance.client);
-  final deckRepository = DeckRepositoryImpl(localDbService);
-  final flashcardRepository = FlashcardRepositoryImpl(localDbService);
-  final syncService = SyncService(
-    Supabase.instance.client,
-    deckRepository,
-    flashcardRepository,
-  );
+  final deckRepository = DeckRepositoryImpl(Supabase.instance.client);
+  final flashcardRepository = FlashcardRepositoryImpl(Supabase.instance.client);
 
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<LocalDbService>.value(value: localDbService),
         RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<DeckRepository>.value(value: deckRepository),
         RepositoryProvider<FlashcardRepository>.value(
           value: flashcardRepository,
         ),
-        RepositoryProvider<SyncService>.value(value: syncService),
       ],
       child: MultiBlocProvider(
         providers: [
