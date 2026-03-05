@@ -10,6 +10,7 @@ import '../../../../core/services/gemini_ai_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:ui';
 import 'dart:typed_data';
 import '../../domain/models/flashcard.dart';
 
@@ -156,205 +157,231 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 24,
-                right: 24,
-                top: 24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.magicGeneratorTitle,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0B194C),
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.white.withOpacity(0.5),
+                      width: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    AppLocalizations.of(context)!.magicGeneratorSubtitle,
-                    style: const TextStyle(color: Colors.grey),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    left: 24,
+                    right: 24,
+                    top: 24,
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: textController,
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(
-                        context,
-                      )!.magicGeneratorInputHint,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: isLoading
-                            ? null
-                            : () async {
-                                final picker = ImagePicker();
-                                final image = await picker.pickImage(
-                                  source: ImageSource.camera,
-                                );
-                                if (image != null) {
-                                  final bytes = await image.readAsBytes();
-                                  setState(() {
-                                    attachedFileName = image.name;
-                                    attachedFileBytes = bytes;
-                                    attachedMimeType = 'image/jpeg';
-                                  });
-                                }
-                              },
-                        icon: const Icon(Icons.camera_alt),
-                        label: Text(
-                          AppLocalizations.of(context)!.magicGeneratorCamera,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF0F0F0),
-                          foregroundColor: const Color(0xFF0B194C),
+                      Text(
+                        AppLocalizations.of(context)!.magicGeneratorTitle,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0B194C),
                         ),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: isLoading
-                            ? null
-                            : () async {
-                                final result = await FilePicker.platform
-                                    .pickFiles(
-                                      type: FileType.custom,
-                                      allowedExtensions: [
-                                        'pdf',
-                                        'png',
-                                        'jpg',
-                                        'jpeg',
-                                      ],
-                                      withData: true,
-                                    );
-                                if (result != null) {
-                                  final file = result.files.first;
-                                  final bytes =
-                                      file.bytes ??
-                                      await File(file.path!).readAsBytes();
-                                  String mime = 'application/pdf';
-                                  if (file.extension?.toLowerCase() == 'png')
-                                    mime = 'image/png';
-                                  if (file.extension?.toLowerCase() == 'jpg' ||
-                                      file.extension?.toLowerCase() == 'jpeg')
-                                    mime = 'image/jpeg';
-
-                                  setState(() {
-                                    attachedFileName = file.name;
-                                    attachedFileBytes = bytes;
-                                    attachedMimeType = mime;
-                                  });
-                                }
-                              },
-                        icon: const Icon(Icons.attach_file),
-                        label: Text(
-                          AppLocalizations.of(
+                      const SizedBox(height: 12),
+                      Text(
+                        AppLocalizations.of(context)!.magicGeneratorSubtitle,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: textController,
+                        maxLines: 6,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(
                             context,
-                          )!.magicGeneratorAttachment,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF0F0F0),
-                          foregroundColor: const Color(0xFF0B194C),
+                          )!.magicGeneratorInputHint,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    final picker = ImagePicker();
+                                    final image = await picker.pickImage(
+                                      source: ImageSource.camera,
+                                    );
+                                    if (image != null) {
+                                      final bytes = await image.readAsBytes();
+                                      setState(() {
+                                        attachedFileName = image.name;
+                                        attachedFileBytes = bytes;
+                                        attachedMimeType = 'image/jpeg';
+                                      });
+                                    }
+                                  },
+                            icon: const Icon(Icons.camera_alt),
+                            label: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.magicGeneratorCamera,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFF0F0F0),
+                              foregroundColor: const Color(0xFF0B194C),
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    final result = await FilePicker.platform
+                                        .pickFiles(
+                                          type: FileType.custom,
+                                          allowedExtensions: [
+                                            'pdf',
+                                            'png',
+                                            'jpg',
+                                            'jpeg',
+                                          ],
+                                          withData: true,
+                                        );
+                                    if (result != null) {
+                                      final file = result.files.first;
+                                      final bytes =
+                                          file.bytes ??
+                                          await File(file.path!).readAsBytes();
+                                      String mime = 'application/pdf';
+                                      if (file.extension?.toLowerCase() ==
+                                          'png') {
+                                        mime = 'image/png';
+                                      }
+                                      if (file.extension?.toLowerCase() ==
+                                              'jpg' ||
+                                          file.extension?.toLowerCase() ==
+                                              'jpeg') {
+                                        mime = 'image/jpeg';
+                                      }
+
+                                      setState(() {
+                                        attachedFileName = file.name;
+                                        attachedFileBytes = bytes;
+                                        attachedMimeType = mime;
+                                      });
+                                    }
+                                  },
+                            icon: const Icon(Icons.attach_file),
+                            label: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.magicGeneratorAttachment,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFF0F0F0),
+                              foregroundColor: const Color(0xFF0B194C),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (attachedFileName != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text(
+                            '${AppLocalizations.of(context)!.magicGeneratorAttachmentReady} $attachedFileName',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4DB97F),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      if (isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (textController.text.trim().isEmpty &&
+                                attachedFileBytes == null) {
+                              return;
+                            }
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            try {
+                              final cards = await GeminiAiService()
+                                  .generateFlashcards(
+                                    contextText: textController.text.trim(),
+                                    fileBytes: attachedFileBytes,
+                                    mimeType: attachedMimeType,
+                                    languageCode: Localizations.localeOf(
+                                      context,
+                                    ).languageCode,
+                                  );
+
+                              if (mounted) {
+                                context.read<FlashcardBloc>().add(
+                                  CreateFlashcardsBulk(widget.deckId, cards),
+                                );
+
+                                if (!context.mounted) return;
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.magicGeneratorSuccess(cards.length),
+                                    ),
+                                    backgroundColor: const Color(0xFF76E0A3),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.auto_awesome),
+                          label: Text(
+                            AppLocalizations.of(context)!.magicGeneratorButton,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0B194C),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
+                      const SizedBox(height: 24),
                     ],
                   ),
-                  if (attachedFileName != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, bottom: 8),
-                      child: Text(
-                        '${AppLocalizations.of(context)!.magicGeneratorAttachmentReady} $attachedFileName',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF4DB97F),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 16),
-                  if (isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        if (textController.text.trim().isEmpty &&
-                            attachedFileBytes == null)
-                          return;
-                        setState(() {
-                          isLoading = true;
-                        });
-
-                        try {
-                          final cards = await GeminiAiService()
-                              .generateFlashcards(
-                                contextText: textController.text.trim(),
-                                fileBytes: attachedFileBytes,
-                                mimeType: attachedMimeType,
-                                languageCode: Localizations.localeOf(
-                                  context,
-                                ).languageCode,
-                              );
-
-                          if (mounted) {
-                            context.read<FlashcardBloc>().add(
-                              CreateFlashcardsBulk(widget.deckId, cards),
-                            );
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.magicGeneratorSuccess(cards.length),
-                                ),
-                                backgroundColor: const Color(0xFF76E0A3),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      icon: const Icon(Icons.auto_awesome),
-                      label: Text(
-                        AppLocalizations.of(context)!.magicGeneratorButton,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0B194C),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-                ],
+                ),
               ),
             );
           },
@@ -400,17 +427,20 @@ class _DeckDetailPageState extends State<DeckDetailPage> {
           Expanded(
             child: BlocBuilder<FlashcardBloc, FlashcardState>(
               builder: (context, state) {
-                if (state is FlashcardLoading)
+                if (state is FlashcardLoading) {
                   return const Center(child: CircularProgressIndicator());
-                if (state is FlashcardError)
+                }
+                if (state is FlashcardError) {
                   return Center(child: Text(state.message));
+                }
                 if (state is FlashcardLoaded) {
-                  if (state.flashcards.isEmpty)
+                  if (state.flashcards.isEmpty) {
                     return Center(
                       child: Text(
                         AppLocalizations.of(context)!.flashcardsEmpty,
                       ),
                     );
+                  }
                   return ListView.builder(
                     itemCount: state.flashcards.length,
                     itemBuilder: (context, index) {

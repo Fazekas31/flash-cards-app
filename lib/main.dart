@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_constants.dart';
 
 import 'core/routes/app_router.dart';
@@ -103,16 +104,20 @@ class MyApp extends StatelessWidget {
               onPrimary: const Color(0xFF0B194C), // Deep Blue Dark Text
               surface: Colors.white,
               onSurface: const Color(0xFF0B194C),
-              background: const Color(0xFFF9FAFB),
             ),
             useMaterial3: true,
-            appBarTheme: const AppBarTheme(
+            appBarTheme: AppBarTheme(
               backgroundColor: Colors.white,
-              foregroundColor: Color(0xFF0B194C),
+              foregroundColor: const Color(0xFF0B194C),
               elevation: 0,
               centerTitle: true,
-              iconTheme: IconThemeData(color: Color(0xFF0B194C)),
-              actionsIconTheme: IconThemeData(color: Color(0xFF0B194C)),
+              titleTextStyle: GoogleFonts.outfit(
+                color: const Color(0xFF0B194C),
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+              iconTheme: const IconThemeData(color: Color(0xFF0B194C)),
+              actionsIconTheme: const IconThemeData(color: Color(0xFF0B194C)),
             ),
             floatingActionButtonTheme: const FloatingActionButtonThemeData(
               backgroundColor: Color(0xFF76E0A3),
@@ -135,19 +140,19 @@ class MyApp extends StatelessWidget {
             cardTheme: CardThemeData(
               color: Colors.white,
               elevation: 12,
-              shadowColor: Colors.black.withOpacity(0.25),
+              shadowColor: Colors.black.withValues(alpha: 0.25),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: BorderSide(color: Colors.grey.shade200, width: 1),
               ),
             ),
-            textTheme: const TextTheme(
-              titleLarge: TextStyle(
-                color: Color(0xFF0B194C),
+            textTheme: GoogleFonts.interTextTheme().copyWith(
+              titleLarge: GoogleFonts.outfit(
+                color: const Color(0xFF0B194C),
                 fontWeight: FontWeight.bold,
               ),
-              bodyLarge: TextStyle(color: Color(0xFF0B194C)),
-              bodyMedium: TextStyle(color: Color(0xFF0B194C)),
+              bodyLarge: GoogleFonts.inter(color: const Color(0xFF0B194C)),
+              bodyMedium: GoogleFonts.inter(color: const Color(0xFF0B194C)),
             ),
           ),
           routerConfig: appRouter,

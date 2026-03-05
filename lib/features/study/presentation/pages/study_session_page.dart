@@ -2,6 +2,8 @@ import 'package:flash_cards/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'dart:ui';
 import '../bloc/flashcard_bloc.dart';
 import '../bloc/flashcard_event.dart';
 import '../bloc/flashcard_state.dart';
@@ -52,110 +54,128 @@ class _StudySessionPageState extends State<StudySessionPage> {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.6,
-          minChildSize: 0.4,
-          maxChildSize: 0.9,
-          builder: (context, scrollController) {
-            return Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.9),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              border: Border(
+                top: BorderSide(
+                  color: Colors.white.withOpacity(0.5),
+                  width: 1.5,
+                ),
+              ),
+            ),
+            child: DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.6,
+              minChildSize: 0.4,
+              maxChildSize: 0.9,
+              builder: (context, scrollController) {
+                return Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.aiTeacher,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0B194C),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.aiTeacher,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0B194C),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
+                      const Divider(),
+                      Expanded(
+                        child: FutureBuilder<String>(
+                          future: GeminiAiService().explainFlashcardTheme(
+                            card.question,
+                            card.answer,
+                            isError: isError,
+                            languageCode: Localizations.localeOf(
+                              context,
+                            ).languageCode,
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const CircularProgressIndicator(
+                                      color: Color(0xFF76E0A3),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      AppLocalizations.of(context)!.aiAnalyzing,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                  '${AppLocalizations.of(context)!.aiExplainError} ${snapshot.error}',
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              );
+                            } else {
+                              return Markdown(
+                                controller: scrollController,
+                                data: snapshot.data ?? '',
+                                styleSheet: MarkdownStyleSheet(
+                                  p: const TextStyle(
+                                    fontSize: 16,
+                                    height: 1.5,
+                                    color: Color(0xFF0B194C),
+                                  ),
+                                  strong: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF0B194C),
+                                  ),
+                                  a: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                onTapLink: (text, href, title) async {
+                                  if (href != null) {
+                                    final uri = Uri.parse(href);
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    }
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
-                  const Divider(),
-                  Expanded(
-                    child: FutureBuilder<String>(
-                      future: GeminiAiService().explainFlashcardTheme(
-                        card.question,
-                        card.answer,
-                        isError: isError,
-                        languageCode: Localizations.localeOf(
-                          context,
-                        ).languageCode,
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const CircularProgressIndicator(
-                                  color: Color(0xFF76E0A3),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(AppLocalizations.of(context)!.aiAnalyzing),
-                              ],
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              '${AppLocalizations.of(context)!.aiExplainError} ${snapshot.error}',
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          );
-                        } else {
-                          return Markdown(
-                            controller: scrollController,
-                            data: snapshot.data ?? '',
-                            styleSheet: MarkdownStyleSheet(
-                              p: const TextStyle(
-                                fontSize: 16,
-                                height: 1.5,
-                                color: Color(0xFF0B194C),
-                              ),
-                              strong: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF0B194C),
-                              ),
-                              a: const TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                            onTapLink: (text, href, title) async {
-                              if (href != null) {
-                                final uri = Uri.parse(href);
-                                if (await canLaunchUrl(uri)) {
-                                  await launchUrl(
-                                    uri,
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
-                              }
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                );
+              },
+            ),
+          ),
         );
       },
     );
@@ -172,8 +192,9 @@ class _StudySessionPageState extends State<StudySessionPage> {
       ),
       body: BlocBuilder<FlashcardBloc, FlashcardState>(
         builder: (context, state) {
-          if (state is FlashcardLoading)
+          if (state is FlashcardLoading) {
             return const Center(child: CircularProgressIndicator());
+          }
           if (state is StudySessionLoaded) {
             if (state.studyCards.isEmpty) {
               return Center(
@@ -389,19 +410,30 @@ class _StudySessionPageState extends State<StudySessionPage> {
 
   Widget _reviewButton(String text, Color color, VoidCallback onPressed) {
     return Expanded(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        onPressed: onPressed,
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600)),
-      ),
+      child:
+          ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: onPressed,
+                child: Text(
+                  text,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              )
+              .animate()
+              .scale(
+                duration: 300.ms,
+                curve: Curves.easeOutBack,
+                begin: const Offset(0.8, 0.8),
+              )
+              .fade(duration: 300.ms),
     );
   }
 }
